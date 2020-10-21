@@ -12,8 +12,8 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             val fragmentManager = supportFragmentManager
             fragmentManager.beginTransaction()
-                .add(R.id.container, AllNumbersFragment())
-                .commit()
+                    .add(R.id.container, AllNumbersFragment())
+                    .commit()
         }
     }
 }

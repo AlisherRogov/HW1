@@ -13,28 +13,21 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 class AllNumbersFragment : Fragment() {
-    private val LIST_KEY:String = "listKey"
-    private val PORTRAIT_SPAN_NUMBER:Int = 3
-    private val LAND_SPAN_NUMBER:Int = 4
-    var KEY_NUMBER: String = "oneNumber"
-    private lateinit var list: List<Int>
-    private var spanCount:Int = 0
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         list = if (savedInstanceState == null) {
-            (1..100).toList()
+            (1..initialListSize).toList()
         } else {
             (1..savedInstanceState.getInt(LIST_KEY)).toList()
         }
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_all_numbers, container, false)
-        val numbersAdapter = DataAdapter{number -> numberClicked(number)}
+        val numbersAdapter = DataAdapter { number -> numberClicked(number) }
         numbersAdapter.data = list
 
         spanCount = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -43,17 +36,16 @@ class AllNumbersFragment : Fragment() {
             PORTRAIT_SPAN_NUMBER
         }
 
-        val recyclerView = view.findViewById<RecyclerView>(R.id.numbers_recycler).apply {
+        view.findViewById<RecyclerView>(R.id.numbers_recycler).apply {
             layoutManager = GridLayoutManager(context, spanCount)
             adapter = numbersAdapter
         }
-        val button = view.findViewById<Button>(R.id.add_number_button)
-        button.setOnClickListener{
-            list = (1..numbersAdapter.itemCount+1).toList()
+
+        view.findViewById<Button>(R.id.add_number_button).setOnClickListener {
+            list = (1..numbersAdapter.itemCount + 1).toList()
             numbersAdapter.data = list
             numbersAdapter.notifyDataSetChanged()
         }
-
         return view
     }
 
@@ -69,5 +61,16 @@ class AllNumbersFragment : Fragment() {
         bundle.putString(KEY_NUMBER, number)
         numberFragment.arguments = bundle
         fragmentManager?.beginTransaction()?.replace(R.id.container, numberFragment)?.addToBackStack(null)?.commit()
+    }
+
+    companion object {
+        private const val LIST_KEY: String = "listKey"
+        private const val PORTRAIT_SPAN_NUMBER: Int = 3
+        private const val LAND_SPAN_NUMBER: Int = 4
+        private const val KEY_NUMBER: String = "oneNumber"
+        private const val initialListSize: Int = 100
+        private lateinit var list: List<Int>
+        private var spanCount: Int = 0
+        fun getNumbersKey(): String = KEY_NUMBER
     }
 }
